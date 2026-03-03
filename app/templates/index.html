@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Management Tool</title>
+</head>
+<body>
+
+    <h1>Altus Task Manager</h1>
+
+    <form action="{{ url_for('main.create_task') }}" method="get" style="display:inline;">
+        <button type="submit">Create New Task</button>
+    </form>
+
+    <hr>
+
+    <form method="GET" action="{{ url_for('main.index') }}">
+        <label>Filter by Priority:</label>
+        <select name="priority">
+            <option value="">All</option>
+            <option value="Low" {% if priority_filter == "Low" %} selected {% endif %}>Low</option>
+            <option value="Medium" {% if priority_filter == "Medium" %} selected {% endif %}>Medium</option>
+            <option value="High" {% if priority_filter == "High" %} selected {% endif %}>High</option>
+        </select>
+
+        &nbsp;&nbsp;
+
+        <label>Filter by Status:</label>
+        <select name="status">
+            <option value="">All</option>
+            <option value="Pending" {% if status_filter == "Pending" %} selected {% endif %}>Pending</option>
+            <option value="Completed" {% if status_filter == "Completed" %} selected {% endif %}>Completed</option>
+        </select>
+
+        &nbsp;
+        <button type="submit">Apply</button>
+        <a href="{{ url_for('main.index') }}">Clear</a>
+    </form>
+
+    <br>
+
+    {% if tasks %}
+        <table border="1" cellpadding="10">
+
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Assignee Email</th>
+                <th>Priority</th>
+                <th>Created Date</th>
+                <th>Completed Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+            {% for task in tasks %}
+            <tr>
+
+                <td>{{ task.id }}</td>
+
+                <td>{{ task.title }}</td>
+
+                <td>{{ task.description }}</td>
+
+                <td>{{ task.assignee_email }}</td>
+
+                <td>{{ task.priority }}</td>
+
+                <td>{{ task.created_date }}</td>
+
+                <td>{{ task.completed_date }}</td>
+
+                <td>{{ task.status }}</td>
+
+                <td>
+                    {% if task.status != "Completed" %}
+                        <a href="{{ url_for('main.complete_task', id=task.id) }}">
+                            Mark Complete
+                        </a>
+                    {% else %}
+                        Done
+                    {% endif %}
+                    &nbsp;|&nbsp;
+                    <a href="/edit/{{ task.id }}">Edit</a>
+                    &nbsp;|&nbsp;
+                    <a href="/delete/{{ task.id }}" onclick="return confirm('Are you sure you want to delete this task?')">Delete</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    {% else %}
+
+        <p>No tasks yet.</p>
+
+    {% endif %}
+
+</body>
+</html>

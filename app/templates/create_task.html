@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Task</title>
+</head>
+<body>
+
+    <h1>Create New Task</h1>
+
+    <form method="POST">
+
+        <label>Task Title:</label>
+        <br>
+        <input type="text" name="title" required>
+        <br><br>
+
+        <label>Description:</label>
+        <br>
+        <textarea name="description"></textarea>
+        <br><br>
+
+        <label>Assignee Email:</label>
+        <br>
+        <input type="email" name="assignee_email">
+        <br><br>
+
+        <label>Priority:</label>
+        <br>
+        <select name="priority">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Create Task</button>
+
+    </form>
+
+    <br>
+
+    <a href="{{ url_for('main.index') }}">
+        Back to Task List
+    </a>
+
+</body>
+</html>
