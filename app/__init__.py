@@ -1,36 +1,40 @@
 from flask import Flask
 from .extensions import db
 from .routes import main
+import os
 
-# Try loading environment variables from .env, fall back silently if not available
+# Load .env if available
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    # 'python-dotenv' is not installed. You can set environment variables manually
-    # or install it with: pip install python-dotenv
     pass
 
+from config import (
+    DevelopmentConfig,
+    StagingConfig,
+    UATConfig,
+    ProductionConfig
+)
+
 def create_app():
-    # Flask app factory
     app = Flask(__name__)
 
-    # Set secret key for session management and security
-    app.config['SECRET_KEY'] = 'secret-key'
+    # Decide environment
+    env = os.getenv("FLASK_ENV", "development")
 
-    # SQLite database URI (database will be created in instance/ by default)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Altustaskmanagement.db'
+    if env == "production":
+        app.config.from_object(ProductionConfig)
+    elif env == "staging":
+        app.config.from_object(StagingConfig)
+    elif env == "uat":
+        app.config.from_object(UATConfig)
+    else:
+        app.config.from_object(DevelopmentConfig)
 
-    # Disable Flask-SQLAlchemy event system to save resources
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    # Initialize extensions (SQLAlchemy)
     db.init_app(app)
-
-    # Register main Blueprint containing all routes/views
     app.register_blueprint(main)
 
-    # Create all database tables if they don't exist
     with app.app_context():
         db.create_all()
 
